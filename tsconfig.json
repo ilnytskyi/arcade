@@ -6,7 +6,9 @@
     "outFile": "js/init.js"
   },
   "files": [
+    "ts/Abstract.ts",
     "ts/Canvas.ts",
+    "ts/Game.ts",
 
     "ts/init.ts"
   ],
