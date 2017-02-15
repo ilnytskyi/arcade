@@ -17,12 +17,12 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Canvas = (function (_super) {
     __extends(Canvas, _super);
     function Canvas(data) {
-        _super.call(this, data);
         this.data = {
             id: 'grid',
             width: screen.width,
             height: screen.height,
         };
+        _super.call(this, data);
         this.setCanvas(this.data.id);
     }
     Canvas.prototype.setCanvas = function (id) {
@@ -30,25 +30,146 @@ var Canvas = (function (_super) {
         if (!cx) {
             var canvas = document.createElement('canvas');
             canvas.id = id;
-            canvas.width = this.config.width;
-            canvas.height = this.config.height;
+            canvas.width = this.data.width;
+            canvas.height = this.data.height;
             document.body.appendChild(canvas);
             cx = document.getElementById(id);
         }
         this.cx = cx.getContext('2d');
     };
+    Canvas.prototype.drawRect = function (x, y, width, height, color) {
+        this.cx.beginPath();
+        this.cx.fillStyle = color;
+        this.cx.fillRect(x, y, width, height);
+        this.cx.closePath();
+        return this;
+    };
+    Canvas.prototype.clear = function () {
+        this.drawRect(0, 0, this.data.width, this.data.height, '#fff');
+        return this;
+    };
     return Canvas;
 })(Abstract);
+var Target = (function () {
+    function Target(x, y, width, height, color) {
+        this.position = {
+            x: x,
+            y: y,
+        };
+    }
+    return Target;
+})();
+var TargetsCollection = (function () {
+    function TargetsCollection() {
+        this.targets = [];
+    }
+    TargetsCollection.prototype.add = function (target) {
+        this.targets[target.id] = target;
+    };
+    TargetsCollection.prototype.getTarget = function (target) {
+        return this.targets[target.id];
+    };
+    TargetsCollection.prototype.unset = function (target) {
+        delete this.targets[target.id];
+        return this;
+    };
+    return TargetsCollection;
+})();
 var Game = (function (_super) {
     __extends(Game, _super);
     function Game(data) {
+        var _this = this;
+        this.animate = function () {
+            var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            _this.time = new Date();
+            _this.updateFrame();
+            requestAnimationFrame(_this.animate);
+        };
+        this.data = {
+            padding: 10,
+            borders: 5,
+            gun: {
+                width: 15,
+                height: 5,
+                step: 5,
+            }
+        };
         _super.call(this, data);
+        var canvas = new Canvas({
+            width: 360,
+            height: 650,
+        });
+        this.canvas = canvas;
+        this.time = new Date();
+        this.K = {
+            up: 38,
+            left: 37,
+            down: 40,
+            right: 39,
+            space: 32,
+        };
     }
+    Game.prototype.renderFrame = function () {
+        var cv = this.canvas;
+        cv.clear();
+        this.setBorders()
+            .setGun();
+    };
+    Game.prototype.updateFrame = function () {
+        var cv = this.canvas;
+        cv.clear();
+        this.setBorders()
+            .updateGun();
+    };
+    Game.prototype.setBorders = function () {
+        var cv = this.canvas;
+        cv.drawRect(this.data.padding, 0, this.data.borders, cv.data.height, '#000');
+        var right = cv.data.width - this.data.padding - this.data.borders;
+        cv.drawRect(right, 0, this.data.borders, cv.data.height, '#000');
+        this.leftBorder = this.data.padding + this.data.borders;
+        this.rightBorder = right;
+        return this;
+    };
+    Game.prototype.setGun = function () {
+        var cv = this.canvas;
+        var between = this.rightBorder - this.leftBorder;
+        var position = (between / 2);
+        this.data.gun.position = position;
+        cv.drawRect(position, cv.data.height - this.data.padding, this.data.gun.width, this.data.gun.height, '#000');
+        return this;
+    };
+    Game.prototype.updateGun = function () {
+        var cv = this.canvas;
+        var between = this.rightBorder - this.leftBorder;
+        var position = this.data.gun.position;
+        if (position <= this.leftBorder)
+            position = this.leftBorder;
+        var rightLimit = this.rightBorder - this.data.gun.width;
+        if (position >= rightLimit)
+            position = rightLimit;
+        this.data.gun.position = position;
+        cv.drawRect(position, cv.data.height - this.data.padding, this.data.gun.width, this.data.gun.height, '#000');
+    };
+    Game.prototype.handlers = function () {
+        var _this = this;
+        document.addEventListener('keydown', function (e) {
+            var key = e.keyCode;
+            var step = _this.data.gun.step;
+            if (key == _this.K.left)
+                _this.data.gun.position -= step;
+            if (key == _this.K.right)
+                _this.data.gun.position += step;
+        }, false);
+    };
+    Game.prototype.init = function () {
+        this.renderFrame();
+        this.handlers();
+        this.animate();
+        console.log(this);
+    };
     return Game;
 })(Abstract);
-var g = new Canvas({
-    id: 'canvas',
-    width: 460,
-    height: 740
-});
+var g = new Game();
+g.init();
 //# sourceMappingURL=init.js.map

@@ -8,6 +8,8 @@
   "files": [
     "ts/Abstract.ts",
     "ts/Canvas.ts",
+    "ts/Target.ts",
+    "ts/TargetsCollection.ts",
     "ts/Game.ts",
 
     "ts/init.ts"

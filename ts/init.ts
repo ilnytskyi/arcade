@@ -1,5 +1,2 @@
-var g = new Canvas({
-    id: 'canvas',
-    width: 460,
-    height: 740
-});
+var g = new Game();
+g.init();

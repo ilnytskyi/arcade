@@ -1,14 +1,14 @@
 class Canvas extends Abstract {
-    cx:Element;
+    cx:CanvasRenderingContext2D;
 
     constructor(data:Object) {
-        super(data);
-
         this.data = {
             id: 'grid',
             width: screen.width,
             height: screen.height,
         };
+        super(data);
+
         this.setCanvas(this.data.id);
     }
 
@@ -17,12 +17,26 @@ class Canvas extends Abstract {
         if (!cx) {
             let canvas = document.createElement('canvas');
             canvas.id = id;
-            canvas.width = this.config.width;
-            canvas.height = this.config.height;
+            canvas.width = this.data.width;
+            canvas.height = this.data.height;
             document.body.appendChild(canvas);
             cx = document.getElementById(id);
         }
         this.cx = cx.getContext('2d');
+    }
+
+    drawRect(x:number, y:number, width:number, height:number, color:string) {
+        this.cx.beginPath();
+        this.cx.fillStyle = color;
+        this.cx.fillRect(x, y, width, height);
+        this.cx.closePath();
+        return this;
+    }
+
+    clear()
+    {
+        this.drawRect(0,0,this.data.width,this.data.height,'#fff');
+        return this;
     }
 
 }
