@@ -207,7 +207,8 @@ var Game = (function (_super) {
             dir = this.deviceDirectionBy(gamma);
         }
         else {
-            dir = !this.deviceDirectionBy(alpha);
+            var invert = alpha * -1;
+            dir = this.deviceDirectionBy(invert);
         }
         if (dir == null)
             return;
@@ -228,13 +229,18 @@ var Game = (function (_super) {
         var r = null;
         if (axis == 0)
             return null;
+        console.log(axis);
         if (axis < 0) {
             device.changePlu = 0;
+            if (axis == device.changeMin)
+                return null;
             r = axis > device.changeMin;
             device.changeMin = axis;
         }
         else {
             device.changeMin = 0;
+            if (axis == device.changePlu)
+                return null;
             r = axis > device.changePlu;
             device.changePlu = axis;
         }

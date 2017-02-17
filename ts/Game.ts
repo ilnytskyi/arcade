@@ -126,7 +126,6 @@ class Game extends Abstract {
 
     deviceMovementDirection(event:DeviceOrientationEvent) {
         window.device = window.device || {};
-
         window.device.changeMin = window.device.changeMin || 0;
         window.device.changePlu = window.device.changePlu || 0;
 
@@ -171,7 +170,8 @@ class Game extends Abstract {
         if (beta > 45 && beta < 135) {
             dir = this.deviceDirectionBy(gamma);
         } else {
-            dir = !this.deviceDirectionBy(alpha);
+            let invert = alpha * -1;
+            dir = this.deviceDirectionBy(invert);
         }
         if (dir == null) return;
 
@@ -195,9 +195,12 @@ class Game extends Abstract {
 
         if (axis == 0) return null;
 
+        console.log(axis);
         if (axis < 0) {
 
             device.changePlu = 0;
+
+            if (axis == device.changeMin) return null;
 
             r = axis > device.changeMin;
 
@@ -208,12 +211,13 @@ class Game extends Abstract {
 
             device.changeMin = 0;
 
+            if (axis == device.changePlu) return null;
+
             r = axis > device.changePlu;
 
             device.changePlu = axis;
 
         }
-
         return r;
     }
 
