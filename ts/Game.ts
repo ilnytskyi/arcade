@@ -124,8 +124,6 @@ class Game extends Abstract {
             let beta = event.beta.toFixed(2);
             let gamma = event.gamma.toFixed(2);
 
-            var rotation = "rotate("+ event.alpha +"deg) rotate3d(1,0,0, "+ (event.gamma * -1)+"deg)";
-
 
             let step = this.data.gun.step;
             if (alpha > alphaChange) this.data.gun.position -= step;

@@ -166,7 +166,6 @@ var Game = (function (_super) {
             var alpha = event.alpha.toFixed(2);
             var beta = event.beta.toFixed(2);
             var gamma = event.gamma.toFixed(2);
-            var rotation = "rotate(" + event.alpha + "deg) rotate3d(1,0,0, " + (event.gamma * -1) + "deg)";
             var step = _this.data.gun.step;
             if (alpha > alphaChange)
                 _this.data.gun.position -= step;
