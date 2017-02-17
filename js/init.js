@@ -169,9 +169,9 @@ var Game = (function (_super) {
         window.device = window.device || {};
         window.device.changeMin = window.device.changeMin || 0;
         window.device.changePlu = window.device.changePlu || 0;
-        var alpha = event.alpha.toFixed(2) * 1;
-        var beta = event.beta.toFixed(2) * 1;
-        var gamma = event.gamma.toFixed(2) * 1;
+        var alpha = event.alpha.toFixed(0) * 1;
+        var beta = event.beta.toFixed(0) * 1;
+        var gamma = event.gamma.toFixed(0) * 1;
         var step = this.data.gun.step;
         //if (beta < 45 ) {
         //    if (alpha <= 0) {
@@ -207,8 +207,16 @@ var Game = (function (_super) {
             dir = this.deviceDirectionBy(gamma);
         }
         else {
+            dir = !this.deviceDirectionBy(alpha);
         }
-        console.log(dir);
+        if (dir == null)
+            return;
+        if (dir) {
+            this.data.gun.position += 1;
+        }
+        else {
+            this.data.gun.position -= 1;
+        }
         var v = {
             alpha: alpha,
             beta: beta,
@@ -218,7 +226,9 @@ var Game = (function (_super) {
     };
     Game.prototype.deviceDirectionBy = function (axis) {
         var r = null;
-        if (axis <= 0) {
+        if (axis == 0)
+            return null;
+        if (axis < 0) {
             device.changePlu = 0;
             r = axis > device.changeMin;
             device.changeMin = axis;

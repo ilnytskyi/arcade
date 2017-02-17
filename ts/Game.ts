@@ -130,9 +130,9 @@ class Game extends Abstract {
         window.device.changeMin = window.device.changeMin || 0;
         window.device.changePlu = window.device.changePlu || 0;
 
-        let alpha = event.alpha.toFixed(2) * 1;
-        let beta = event.beta.toFixed(2) * 1;
-        let gamma = event.gamma.toFixed(2) * 1;
+        let alpha = event.alpha.toFixed(0) * 1;
+        let beta = event.beta.toFixed(0) * 1;
+        let gamma = event.gamma.toFixed(0) * 1;
 
 
         let step = this.data.gun.step;
@@ -171,10 +171,15 @@ class Game extends Abstract {
         if (beta > 45 && beta < 135) {
             dir = this.deviceDirectionBy(gamma);
         } else {
-
+            dir = !this.deviceDirectionBy(alpha);
         }
+        if (dir == null) return;
 
-        console.log(dir);
+        if (dir) {
+            this.data.gun.position += 1;
+        } else  {
+            this.data.gun.position -= 1;
+        }
 
         let v = {
             alpha: alpha,
@@ -187,7 +192,10 @@ class Game extends Abstract {
 
     private deviceDirectionBy(axis:number) {
         let r = null;
-        if (axis <= 0) {
+
+        if (axis == 0) return null;
+
+        if (axis < 0) {
 
             device.changePlu = 0;
 
