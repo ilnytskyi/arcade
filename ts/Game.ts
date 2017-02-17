@@ -117,7 +117,8 @@ class Game extends Abstract {
 
         },true);
 
-        let alphaChange = 0;
+        let alphaMin = 0;
+        let alphaPlu = 0;
         window.addEventListener("deviceorientation", (event) => {
 
             let alpha = event.alpha.toFixed(2);
@@ -126,15 +127,28 @@ class Game extends Abstract {
 
 
             let step = this.data.gun.step;
-            if (alpha > alphaChange) this.data.gun.position -= step;
-            if (alpha < alphaChange) this.data.gun.position += step;
 
-            alphaChange = alpha;
 
-            console.log(event);
-            // console.log(aX);
-            // console.log(aY);
-            // console.log(aZ);
+            if (alpha <= 0) {
+
+                alphaPlu = 0;
+
+                if (alpha > alphaMin) this.data.gun.position -= step;
+                if (alpha < alphaMin) this.data.gun.position += step;
+
+                alphaMin = alpha;
+
+            } else {
+
+                alphaMin = 0;
+
+                if (alpha < alphaPlu) this.data.gun.position -= step;
+                if (alpha > alphaPlu) this.data.gun.position += step;
+
+                alphaPlu = alpha;
+
+            }
+
 
         }, true);
     }

@@ -161,21 +161,29 @@ var Game = (function (_super) {
             if (key == _this.K.right)
                 _this.data.gun.position += step;
         }, true);
-        var alphaChange = 0;
+        var alphaMin = 0;
+        var alphaPlu = 0;
         window.addEventListener("deviceorientation", function (event) {
             var alpha = event.alpha.toFixed(2);
             var beta = event.beta.toFixed(2);
             var gamma = event.gamma.toFixed(2);
             var step = _this.data.gun.step;
-            if (alpha > alphaChange)
-                _this.data.gun.position -= step;
-            if (alpha < alphaChange)
-                _this.data.gun.position += step;
-            alphaChange = alpha;
-            console.log(event);
-            // console.log(aX);
-            // console.log(aY);
-            // console.log(aZ);
+            if (alpha <= 0) {
+                alphaPlu = 0;
+                if (alpha > alphaMin)
+                    _this.data.gun.position -= step;
+                if (alpha < alphaMin)
+                    _this.data.gun.position += step;
+                alphaMin = alpha;
+            }
+            else {
+                alphaMin = 0;
+                if (alpha < alphaPlu)
+                    _this.data.gun.position -= step;
+                if (alpha > alphaPlu)
+                    _this.data.gun.position += step;
+                alphaPlu = alpha;
+            }
         }, true);
     };
     Game.prototype.init = function () {
