@@ -117,36 +117,57 @@ class Game extends Abstract {
 
         },true);
 
-        let alphaMin = 0;
-        let alphaPlu = 0;
+        let changeMin = 0;
+        let changePlu = 0;
         window.addEventListener("deviceorientation", (event) => {
 
-            let alpha = event.alpha.toFixed(2);
-            let beta = event.beta.toFixed(2);
-            let gamma = event.gamma.toFixed(2);
+            let alpha = event.alpha.toFixed(2) * 1;
+            let beta = event.beta.toFixed(2) * 1;
+            let gamma = event.gamma.toFixed(2) * 1;
 
 
             let step = this.data.gun.step;
 
+            if (beta > 65) {
+                if (alpha <= 0) {
 
-            if (alpha <= 0) {
+                    changePlu = 0;
 
-                alphaPlu = 0;
+                    if (alpha > changeMin) this.data.gun.position -= step;
+                    if (alpha < changeMin) this.data.gun.position += step;
 
-                if (alpha > alphaMin) this.data.gun.position -= step;
-                if (alpha < alphaMin) this.data.gun.position += step;
+                    changeMin = alpha;
 
-                alphaMin = alpha;
+                } else {
 
+                    changeMin = 0;
+
+                    if (alpha < changePlu) this.data.gun.position -= step;
+                    if (alpha > changePlu) this.data.gun.position += step;
+
+                    changePlu = alpha;
+
+                }
             } else {
+                if (gamma <= 0) {
 
-                alphaMin = 0;
+                    changePlu = 0;
 
-                if (alpha < alphaPlu) this.data.gun.position -= step;
-                if (alpha > alphaPlu) this.data.gun.position += step;
+                    if (gamma > changeMin) this.data.gun.position -= step;
+                    if (gamma < changeMin) this.data.gun.position += step;
 
-                alphaPlu = alpha;
+                    changeMin = gamma;
 
+                } else {
+
+                    changeMin = 0;
+
+                    if (gamma < changePlu) this.data.gun.position -= step;
+                    if (gamma > changePlu) this.data.gun.position += step;
+
+                    changePlu = gamma;
+
+                }
             }
 
 

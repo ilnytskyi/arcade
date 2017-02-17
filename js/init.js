@@ -161,28 +161,48 @@ var Game = (function (_super) {
             if (key == _this.K.right)
                 _this.data.gun.position += step;
         }, true);
-        var alphaMin = 0;
-        var alphaPlu = 0;
+        var changeMin = 0;
+        var changePlu = 0;
         window.addEventListener("deviceorientation", function (event) {
-            var alpha = event.alpha.toFixed(2);
-            var beta = event.beta.toFixed(2);
-            var gamma = event.gamma.toFixed(2);
+            var alpha = event.alpha.toFixed(2) * 1;
+            var beta = event.beta.toFixed(2) * 1;
+            var gamma = event.gamma.toFixed(2) * 1;
             var step = _this.data.gun.step;
-            if (alpha <= 0) {
-                alphaPlu = 0;
-                if (alpha > alphaMin)
-                    _this.data.gun.position -= step;
-                if (alpha < alphaMin)
-                    _this.data.gun.position += step;
-                alphaMin = alpha;
+            if (beta > 65) {
+                if (alpha <= 0) {
+                    changePlu = 0;
+                    if (alpha > changeMin)
+                        _this.data.gun.position -= step;
+                    if (alpha < changeMin)
+                        _this.data.gun.position += step;
+                    changeMin = alpha;
+                }
+                else {
+                    changeMin = 0;
+                    if (alpha < changePlu)
+                        _this.data.gun.position -= step;
+                    if (alpha > changePlu)
+                        _this.data.gun.position += step;
+                    changePlu = alpha;
+                }
             }
             else {
-                alphaMin = 0;
-                if (alpha < alphaPlu)
-                    _this.data.gun.position -= step;
-                if (alpha > alphaPlu)
-                    _this.data.gun.position += step;
-                alphaPlu = alpha;
+                if (gamma <= 0) {
+                    changePlu = 0;
+                    if (gamma > changeMin)
+                        _this.data.gun.position -= step;
+                    if (gamma < changeMin)
+                        _this.data.gun.position += step;
+                    changeMin = gamma;
+                }
+                else {
+                    changeMin = 0;
+                    if (gamma < changePlu)
+                        _this.data.gun.position -= step;
+                    if (gamma > changePlu)
+                        _this.data.gun.position += step;
+                    changePlu = gamma;
+                }
             }
         }, true);
     };
