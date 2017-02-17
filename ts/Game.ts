@@ -19,7 +19,7 @@ class Game extends Abstract {
         super(data);
         let canvas = new Canvas({
             width: 320,
-            height: 540,
+            height: 440,
         });
         this.canvas = canvas;
         this.time = new Date();
@@ -126,7 +126,6 @@ class Game extends Abstract {
             console.log(aX);
             console.log(aY);
             console.log(aZ);
-            alert(aX + ' ' + aY + ' ' + aZ);
 
         }, true);
     }

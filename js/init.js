@@ -98,7 +98,7 @@ var Game = (function (_super) {
         _super.call(this, data);
         var canvas = new Canvas({
             width: 320,
-            height: 540,
+            height: 440,
         });
         this.canvas = canvas;
         this.time = new Date();
@@ -169,7 +169,6 @@ var Game = (function (_super) {
             console.log(aX);
             console.log(aY);
             console.log(aZ);
-            alert(aX + ' ' + aY + ' ' + aZ);
         }, true);
     };
     Game.prototype.init = function () {
