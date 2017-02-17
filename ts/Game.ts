@@ -136,36 +136,6 @@ class Game extends Abstract {
 
         let step = this.data.gun.step;
 
-        //if (beta < 45 ) {
-        //    if (alpha <= 0) {
-        //
-        //        device.changePlu = 0;
-        //
-        //        device.changeMin = alpha;
-        //
-        //    } else {
-        //
-        //        device.changeMin = 0;
-        //
-        //        device.changePlu = alpha;
-        //
-        //    }
-        //} else {
-        //    if (gamma <= 0) {
-        //
-        //        device.changePlu = 0;
-        //
-        //        device.changeMin = gamma;
-        //
-        //    } else {
-        //
-        //        device.changeMin = 0;
-        //
-        //        device.changePlu = gamma;
-        //
-        //    }
-        //}
-
         let dir = null;
         if (beta > 45 && beta < 135) {
             dir = this.deviceDirectionBy(gamma);
@@ -176,9 +146,9 @@ class Game extends Abstract {
         if (dir == null) return;
 
         if (dir) {
-            this.data.gun.position += 1;
+            this.data.gun.position += step;
         } else  {
-            this.data.gun.position -= 1;
+            this.data.gun.position -= step;
         }
 
         let v = {
@@ -195,7 +165,6 @@ class Game extends Abstract {
 
         if (axis == 0) return null;
 
-        console.log(axis);
         if (axis < 0) {
 
             device.changePlu = 0;

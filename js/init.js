@@ -173,35 +173,6 @@ var Game = (function (_super) {
         var beta = event.beta.toFixed(0) * 1;
         var gamma = event.gamma.toFixed(0) * 1;
         var step = this.data.gun.step;
-        //if (beta < 45 ) {
-        //    if (alpha <= 0) {
-        //
-        //        device.changePlu = 0;
-        //
-        //        device.changeMin = alpha;
-        //
-        //    } else {
-        //
-        //        device.changeMin = 0;
-        //
-        //        device.changePlu = alpha;
-        //
-        //    }
-        //} else {
-        //    if (gamma <= 0) {
-        //
-        //        device.changePlu = 0;
-        //
-        //        device.changeMin = gamma;
-        //
-        //    } else {
-        //
-        //        device.changeMin = 0;
-        //
-        //        device.changePlu = gamma;
-        //
-        //    }
-        //}
         var dir = null;
         if (beta > 45 && beta < 135) {
             dir = this.deviceDirectionBy(gamma);
@@ -213,10 +184,10 @@ var Game = (function (_super) {
         if (dir == null)
             return;
         if (dir) {
-            this.data.gun.position += 1;
+            this.data.gun.position += step;
         }
         else {
-            this.data.gun.position -= 1;
+            this.data.gun.position -= step;
         }
         var v = {
             alpha: alpha,
@@ -229,7 +200,6 @@ var Game = (function (_super) {
         var r = null;
         if (axis == 0)
             return null;
-        console.log(axis);
         if (axis < 0) {
             device.changePlu = 0;
             if (axis == device.changeMin)
