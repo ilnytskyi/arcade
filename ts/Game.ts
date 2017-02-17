@@ -13,7 +13,7 @@ class Game extends Abstract {
             gun: {
                 width: 15,
                 height: 5,
-                step:5,
+                step: 5,
             }
         }
         super(data);
@@ -106,8 +106,8 @@ class Game extends Abstract {
         );
     }
 
-    handlers(){
-        document.addEventListener('keydown',(e) => {
+    handlers() {
+        document.addEventListener('keydown', (e) => {
             let key = e.keyCode;
             let step = this.data.gun.step;
 
@@ -115,63 +115,98 @@ class Game extends Abstract {
             if (key == this.K.right) this.data.gun.position += step;
 
 
-        },true);
+        }, true);
 
-        let changeMin = 0;
-        let changePlu = 0;
         window.addEventListener("deviceorientation", (event) => {
 
-            let alpha = event.alpha.toFixed(2) * 1;
-            let beta = event.beta.toFixed(2) * 1;
-            let gamma = event.gamma.toFixed(2) * 1;
-
-
-            let step = this.data.gun.step;
-
-            if (beta < 65) {
-                if (alpha <= 0) {
-
-                    changePlu = 0;
-
-                    if (alpha > changeMin) this.data.gun.position -= step;
-                    if (alpha < changeMin) this.data.gun.position += step;
-
-                    changeMin = alpha;
-
-                } else {
-
-                    changeMin = 0;
-
-                    if (alpha < changePlu) this.data.gun.position -= step;
-                    if (alpha > changePlu) this.data.gun.position += step;
-
-                    changePlu = alpha;
-
-                }
-            } else {
-                if (gamma <= 0) {
-
-                    changePlu = 0;
-
-                    if (gamma > changeMin) this.data.gun.position -= step;
-                    if (gamma < changeMin) this.data.gun.position += step;
-
-                    changeMin = gamma;
-
-                } else {
-
-                    changeMin = 0;
-
-                    if (gamma < changePlu) this.data.gun.position -= step;
-                    if (gamma > changePlu) this.data.gun.position += step;
-
-                    changePlu = gamma;
-
-                }
-            }
-
+            this.deviceMovementDirection(event);
 
         }, true);
+    }
+
+    deviceMovementDirection(event:DeviceOrientationEvent) {
+        window.device = window.device || {};
+
+        window.device.changeMin = window.device.changeMin || 0;
+        window.device.changePlu = window.device.changePlu || 0;
+
+        let alpha = event.alpha.toFixed(2) * 1;
+        let beta = event.beta.toFixed(2) * 1;
+        let gamma = event.gamma.toFixed(2) * 1;
+
+
+        let step = this.data.gun.step;
+
+        //if (beta < 45 ) {
+        //    if (alpha <= 0) {
+        //
+        //        device.changePlu = 0;
+        //
+        //        device.changeMin = alpha;
+        //
+        //    } else {
+        //
+        //        device.changeMin = 0;
+        //
+        //        device.changePlu = alpha;
+        //
+        //    }
+        //} else {
+        //    if (gamma <= 0) {
+        //
+        //        device.changePlu = 0;
+        //
+        //        device.changeMin = gamma;
+        //
+        //    } else {
+        //
+        //        device.changeMin = 0;
+        //
+        //        device.changePlu = gamma;
+        //
+        //    }
+        //}
+
+        let dir = null;
+        if (beta > 45 && beta < 135) {
+            dir = this.deviceDirectionBy(gamma);
+        } else {
+
+        }
+
+        console.log(dir);
+
+        let v = {
+            alpha: alpha,
+            beta: beta,
+            gamma: gamma
+        };
+        document.getElementById('debug').innerHTML = JSON.stringify(v) + "\n\n" + dir;
+
+    }
+
+    private deviceDirectionBy(axis:number) {
+        let r = null;
+        if (axis <= 0) {
+
+            device.changePlu = 0;
+
+            r = axis > device.changeMin;
+
+            device.changeMin = axis;
+
+
+        } else {
+
+            device.changeMin = 0;
+
+            r = axis > device.changePlu;
+
+            device.changePlu = axis;
+
+        }
+
+        return r;
     }
 
     public animate = () => {

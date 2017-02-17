@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Abstract = (function () {
     function Abstract(data) {
         this.setCustomData(data);
@@ -13,7 +8,12 @@ var Abstract = (function () {
         }
     };
     return Abstract;
-}());
+})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Canvas = (function (_super) {
     __extends(Canvas, _super);
     function Canvas(data) {
@@ -49,7 +49,7 @@ var Canvas = (function (_super) {
         return this;
     };
     return Canvas;
-}(Abstract));
+})(Abstract);
 var Target = (function () {
     function Target(x, y, width, height, color) {
         this.position = {
@@ -58,7 +58,7 @@ var Target = (function () {
         };
     }
     return Target;
-}());
+})();
 var TargetsCollection = (function () {
     function TargetsCollection() {
         this.targets = [];
@@ -74,7 +74,7 @@ var TargetsCollection = (function () {
         return this;
     };
     return TargetsCollection;
-}());
+})();
 var Game = (function (_super) {
     __extends(Game, _super);
     function Game(data) {
@@ -161,50 +161,74 @@ var Game = (function (_super) {
             if (key == _this.K.right)
                 _this.data.gun.position += step;
         }, true);
-        var changeMin = 0;
-        var changePlu = 0;
         window.addEventListener("deviceorientation", function (event) {
-            var alpha = event.alpha.toFixed(2) * 1;
-            var beta = event.beta.toFixed(2) * 1;
-            var gamma = event.gamma.toFixed(2) * 1;
-            var step = _this.data.gun.step;
-            if (beta < 65) {
-                if (alpha <= 0) {
-                    changePlu = 0;
-                    if (alpha > changeMin)
-                        _this.data.gun.position -= step;
-                    if (alpha < changeMin)
-                        _this.data.gun.position += step;
-                    changeMin = alpha;
-                }
-                else {
-                    changeMin = 0;
-                    if (alpha < changePlu)
-                        _this.data.gun.position -= step;
-                    if (alpha > changePlu)
-                        _this.data.gun.position += step;
-                    changePlu = alpha;
-                }
-            }
-            else {
-                if (gamma <= 0) {
-                    changePlu = 0;
-                    if (gamma > changeMin)
-                        _this.data.gun.position -= step;
-                    if (gamma < changeMin)
-                        _this.data.gun.position += step;
-                    changeMin = gamma;
-                }
-                else {
-                    changeMin = 0;
-                    if (gamma < changePlu)
-                        _this.data.gun.position -= step;
-                    if (gamma > changePlu)
-                        _this.data.gun.position += step;
-                    changePlu = gamma;
-                }
-            }
+            _this.deviceMovementDirection(event);
         }, true);
+    };
+    Game.prototype.deviceMovementDirection = function (event) {
+        window.device = window.device || {};
+        window.device.changeMin = window.device.changeMin || 0;
+        window.device.changePlu = window.device.changePlu || 0;
+        var alpha = event.alpha.toFixed(2) * 1;
+        var beta = event.beta.toFixed(2) * 1;
+        var gamma = event.gamma.toFixed(2) * 1;
+        var step = this.data.gun.step;
+        //if (beta < 45 ) {
+        //    if (alpha <= 0) {
+        //
+        //        device.changePlu = 0;
+        //
+        //        device.changeMin = alpha;
+        //
+        //    } else {
+        //
+        //        device.changeMin = 0;
+        //
+        //        device.changePlu = alpha;
+        //
+        //    }
+        //} else {
+        //    if (gamma <= 0) {
+        //
+        //        device.changePlu = 0;
+        //
+        //        device.changeMin = gamma;
+        //
+        //    } else {
+        //
+        //        device.changeMin = 0;
+        //
+        //        device.changePlu = gamma;
+        //
+        //    }
+        //}
+        var dir = null;
+        if (beta > 45 && beta < 135) {
+            dir = this.deviceDirectionBy(gamma);
+        }
+        else {
+        }
+        console.log(dir);
+        var v = {
+            alpha: alpha,
+            beta: beta,
+            gamma: gamma
+        };
+        document.getElementById('debug').innerHTML = JSON.stringify(v) + "\n\n" + dir;
+    };
+    Game.prototype.deviceDirectionBy = function (axis) {
+        var r = null;
+        if (axis <= 0) {
+            device.changePlu = 0;
+            r = axis > device.changeMin;
+            device.changeMin = axis;
+        }
+        else {
+            device.changeMin = 0;
+            r = axis > device.changePlu;
+            device.changePlu = axis;
+        }
+        return r;
     };
     Game.prototype.init = function () {
         this.renderFrame();
@@ -213,7 +237,7 @@ var Game = (function (_super) {
         console.log(this);
     };
     return Game;
-}(Abstract));
+})(Abstract);
 var g = new Game();
 g.init();
 //# sourceMappingURL=init.js.map
