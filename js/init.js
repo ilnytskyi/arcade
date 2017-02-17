@@ -161,14 +161,22 @@ var Game = (function (_super) {
             if (key == _this.K.right)
                 _this.data.gun.position += step;
         }, true);
-        window.addEventListener("devicemotion", function (event) {
-            var aX = event.accelerationIncludingGravity.x * 1;
-            var aY = event.accelerationIncludingGravity.y * 1;
-            var aZ = event.accelerationIncludingGravity.z * 1;
+        var alphaChange = 0;
+        window.addEventListener("deviceorientation", function (event) {
+            var alpha = event.alpha.toFixed(2);
+            var beta = event.beta.toFixed(2);
+            var gamma = event.gamma.toFixed(2);
+            var rotation = "rotate(" + event.alpha + "deg) rotate3d(1,0,0, " + (event.gamma * -1) + "deg)";
+            var step = _this.data.gun.step;
+            if (alpha > alphaChange)
+                _this.data.gun.position -= step;
+            if (alpha < alphaChange)
+                _this.data.gun.position += step;
+            alphaChange = alpha;
             console.log(event);
-            console.log(aX);
-            console.log(aY);
-            console.log(aZ);
+            // console.log(aX);
+            // console.log(aY);
+            // console.log(aZ);
         }, true);
     };
     Game.prototype.init = function () {

@@ -117,15 +117,26 @@ class Game extends Abstract {
 
         },true);
 
-        window.addEventListener("devicemotion", (event) => {
-            var aX = event.accelerationIncludingGravity.x*1;
-            var aY = event.accelerationIncludingGravity.y*1;
-            var aZ = event.accelerationIncludingGravity.z*1;
+        let alphaChange = 0;
+        window.addEventListener("deviceorientation", (event) => {
+
+            let alpha = event.alpha.toFixed(2);
+            let beta = event.beta.toFixed(2);
+            let gamma = event.gamma.toFixed(2);
+
+            var rotation = "rotate("+ event.alpha +"deg) rotate3d(1,0,0, "+ (event.gamma * -1)+"deg)";
+
+
+            let step = this.data.gun.step;
+            if (alpha > alphaChange) this.data.gun.position -= step;
+            if (alpha < alphaChange) this.data.gun.position += step;
+
+            alphaChange = alpha;
 
             console.log(event);
-            console.log(aX);
-            console.log(aY);
-            console.log(aZ);
+            // console.log(aX);
+            // console.log(aY);
+            // console.log(aZ);
 
         }, true);
     }
