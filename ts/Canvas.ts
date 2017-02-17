@@ -4,8 +4,8 @@ class Canvas extends Abstract {
     constructor(data:Object) {
         this.data = {
             id: 'grid',
-            width: screen.width,
-            height: screen.height,
+            width: window.innerWidth,
+            height: window.innerHeight,
         };
         super(data);
 
@@ -35,7 +35,7 @@ class Canvas extends Abstract {
 
     clear()
     {
-        this.drawRect(0,0,this.data.width,this.data.height,'#fff');
+        this.cx.clearRect(0,0,this.data.width,this.data.height);
         return this;
     }
 

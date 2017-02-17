@@ -18,8 +18,8 @@ class Game extends Abstract {
         }
         super(data);
         let canvas = new Canvas({
-            width: 360,
-            height: 650,
+            width: 320,
+            height: 540,
         });
         this.canvas = canvas;
         this.time = new Date();
@@ -115,7 +115,20 @@ class Game extends Abstract {
             if (key == this.K.right) this.data.gun.position += step;
 
 
-        },false);
+        },true);
+
+        window.addEventListener("devicemotion", (event) => {
+            var aX = event.accelerationIncludingGravity.x*1;
+            var aY = event.accelerationIncludingGravity.y*1;
+            var aZ = event.accelerationIncludingGravity.z*1;
+
+            console.log(event);
+            console.log(aX);
+            console.log(aY);
+            console.log(aZ);
+            alert(aX + ' ' + aY + ' ' + aZ);
+
+        }, true);
     }
 
     public animate = () => {

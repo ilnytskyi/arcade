@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Abstract = (function () {
     function Abstract(data) {
         this.setCustomData(data);
@@ -8,19 +13,14 @@ var Abstract = (function () {
         }
     };
     return Abstract;
-})();
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+}());
 var Canvas = (function (_super) {
     __extends(Canvas, _super);
     function Canvas(data) {
         this.data = {
             id: 'grid',
-            width: screen.width,
-            height: screen.height,
+            width: window.innerWidth,
+            height: window.innerHeight,
         };
         _super.call(this, data);
         this.setCanvas(this.data.id);
@@ -45,11 +45,11 @@ var Canvas = (function (_super) {
         return this;
     };
     Canvas.prototype.clear = function () {
-        this.drawRect(0, 0, this.data.width, this.data.height, '#fff');
+        this.cx.clearRect(0, 0, this.data.width, this.data.height);
         return this;
     };
     return Canvas;
-})(Abstract);
+}(Abstract));
 var Target = (function () {
     function Target(x, y, width, height, color) {
         this.position = {
@@ -58,7 +58,7 @@ var Target = (function () {
         };
     }
     return Target;
-})();
+}());
 var TargetsCollection = (function () {
     function TargetsCollection() {
         this.targets = [];
@@ -74,7 +74,7 @@ var TargetsCollection = (function () {
         return this;
     };
     return TargetsCollection;
-})();
+}());
 var Game = (function (_super) {
     __extends(Game, _super);
     function Game(data) {
@@ -97,8 +97,8 @@ var Game = (function (_super) {
         };
         _super.call(this, data);
         var canvas = new Canvas({
-            width: 360,
-            height: 650,
+            width: 320,
+            height: 540,
         });
         this.canvas = canvas;
         this.time = new Date();
@@ -160,7 +160,17 @@ var Game = (function (_super) {
                 _this.data.gun.position -= step;
             if (key == _this.K.right)
                 _this.data.gun.position += step;
-        }, false);
+        }, true);
+        window.addEventListener("devicemotion", function (event) {
+            var aX = event.accelerationIncludingGravity.x * 1;
+            var aY = event.accelerationIncludingGravity.y * 1;
+            var aZ = event.accelerationIncludingGravity.z * 1;
+            console.log(event);
+            console.log(aX);
+            console.log(aY);
+            console.log(aZ);
+            alert(aX + ' ' + aY + ' ' + aZ);
+        }, true);
     };
     Game.prototype.init = function () {
         this.renderFrame();
@@ -169,7 +179,7 @@ var Game = (function (_super) {
         console.log(this);
     };
     return Game;
-})(Abstract);
+}(Abstract));
 var g = new Game();
 g.init();
 //# sourceMappingURL=init.js.map
