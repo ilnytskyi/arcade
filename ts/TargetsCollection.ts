@@ -7,6 +7,7 @@ class TargetsCollection {
 
     add(target:Target){
         this.targets[target.id] = target;
+        return this;
     }
 
     getTarget(target:Target)

@@ -1,11 +1,16 @@
 class Target {
-    position:Object;
+    width:number;
+    height:number;
+    x:number;
+    y:number;
+    color:string;
 
     constructor(x:number,y:number,width:number,height:number,color:string){
 
-        this.position = {
-            x: x,
-            y: y,
-        }
+        this.width = width || 10;
+        this.height = height || 10;
+        this.x = x;
+        this.y = y;
+        this.color = color || '#d49661'
     }
 }

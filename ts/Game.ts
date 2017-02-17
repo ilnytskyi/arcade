@@ -3,7 +3,7 @@ class Game extends Abstract {
     targets:TargetsCollection;
     leftBorder:number;
     rightBorder:number;
-    time:Object;
+    time:Date;
     K:Object;
 
     constructor(data:Object) {
@@ -44,6 +44,7 @@ class Game extends Abstract {
         cv.clear();
         this.setBorders()
             .updateGun();
+        this.push();
     }
 
     setBorders() {
@@ -114,7 +115,13 @@ class Game extends Abstract {
             if (key == this.K.left) this.data.gun.position -= step;
             if (key == this.K.right) this.data.gun.position += step;
 
+            if (key == this.K.space) this.push();
 
+
+        }, true);
+
+        document.addEventListener('click', (e) => {
+             this.push();
         }, true);
 
         window.addEventListener("deviceorientation", (event) => {
@@ -158,6 +165,17 @@ class Game extends Abstract {
         };
         document.getElementById('debug').innerHTML = JSON.stringify(v) + "\n\n" + dir;
 
+    }
+
+    push() {
+        let cv = this.canvas;
+        cv.drawRect(
+            this.data.gun.position,
+            this.canvas.data.height - (this.time.getMilliseconds() / 2),
+            10,10,'#000'
+        );
+        console.log('push');
+        console.log(this.data.gun.position, this.canvas.data.height - this.time.getSeconds() / 60);
     }
 
     private deviceDirectionBy(axis:number) {

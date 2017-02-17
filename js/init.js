@@ -52,10 +52,11 @@ var Canvas = (function (_super) {
 })(Abstract);
 var Target = (function () {
     function Target(x, y, width, height, color) {
-        this.position = {
-            x: x,
-            y: y,
-        };
+        this.width = width || 10;
+        this.height = height || 10;
+        this.x = x;
+        this.y = y;
+        this.color = color || '#d49661';
     }
     return Target;
 })();
@@ -65,6 +66,7 @@ var TargetsCollection = (function () {
     }
     TargetsCollection.prototype.add = function (target) {
         this.targets[target.id] = target;
+        return this;
     };
     TargetsCollection.prototype.getTarget = function (target) {
         return this.targets[target.id];
@@ -121,6 +123,7 @@ var Game = (function (_super) {
         cv.clear();
         this.setBorders()
             .updateGun();
+        this.push();
     };
     Game.prototype.setBorders = function () {
         var cv = this.canvas;
@@ -160,6 +163,11 @@ var Game = (function (_super) {
                 _this.data.gun.position -= step;
             if (key == _this.K.right)
                 _this.data.gun.position += step;
+            if (key == _this.K.space)
+                _this.push();
+        }, true);
+        document.addEventListener('click', function (e) {
+            _this.push();
         }, true);
         window.addEventListener("deviceorientation", function (event) {
             _this.deviceMovementDirection(event);
@@ -195,6 +203,12 @@ var Game = (function (_super) {
             gamma: gamma
         };
         document.getElementById('debug').innerHTML = JSON.stringify(v) + "\n\n" + dir;
+    };
+    Game.prototype.push = function () {
+        var cv = this.canvas;
+        cv.drawRect(this.data.gun.position, this.canvas.data.height - (this.time.getMilliseconds() / 2), 10, 10, '#000');
+        console.log('push');
+        console.log(this.data.gun.position, this.canvas.data.height - this.time.getSeconds() / 60);
     };
     Game.prototype.deviceDirectionBy = function (axis) {
         var r = null;
