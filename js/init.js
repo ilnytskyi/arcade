@@ -98,7 +98,7 @@ var Game = (function (_super) {
         _super.call(this, data);
         var canvas = new Canvas({
             width: 320,
-            height: 440,
+            height: 480,
         });
         this.canvas = canvas;
         this.time = new Date();
