@@ -128,7 +128,7 @@ class Game extends Abstract {
 
             let step = this.data.gun.step;
 
-            if (beta > 65) {
+            if (beta < 65) {
                 if (alpha <= 0) {
 
                     changePlu = 0;

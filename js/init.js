@@ -168,7 +168,7 @@ var Game = (function (_super) {
             var beta = event.beta.toFixed(2) * 1;
             var gamma = event.gamma.toFixed(2) * 1;
             var step = _this.data.gun.step;
-            if (beta > 65) {
+            if (beta < 65) {
                 if (alpha <= 0) {
                     changePlu = 0;
                     if (alpha > changeMin)
