@@ -85,7 +85,7 @@ var Bullet = (function (_super) {
         _super.call(this, x, y, width, height, color);
         this.width = width || 5;
         this.height = height || 5;
-        this.color = color || '#ff0';
+        this.color = color || '#f00';
     }
     return Bullet;
 })(Entity);
