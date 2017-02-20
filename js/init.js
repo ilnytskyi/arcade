@@ -1,3 +1,11 @@
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + s4();
+}
 var Abstract = (function () {
     function Abstract(data) {
         this.setCustomData(data);
@@ -39,7 +47,7 @@ var Canvas = (function (_super) {
     };
     Canvas.prototype.drawRect = function (x, y, width, height, color) {
         this.cx.beginPath();
-        this.cx.fillStyle = color;
+        this.cx.fillStyle = color || '#000';
         this.cx.fillRect(x, y, width, height);
         this.cx.closePath();
         return this;
@@ -50,33 +58,73 @@ var Canvas = (function (_super) {
     };
     return Canvas;
 })(Abstract);
-var Target = (function () {
-    function Target(x, y, width, height, color) {
-        this.width = width || 10;
-        this.height = height || 10;
+var Entity = (function () {
+    function Entity(x, y, width, height, color) {
+        this.id = guid();
         this.x = x;
         this.y = y;
+        this.height = height || 10;
+        this.width = width || 10;
+        this.color = color || '#ff00';
+    }
+    return Entity;
+})();
+var Target = (function (_super) {
+    __extends(Target, _super);
+    function Target(x, y, width, height, color) {
+        _super.call(this, x, y, width, height, color);
+        this.width = width || 10;
+        this.height = height || 10;
         this.color = color || '#d49661';
     }
     return Target;
-})();
-var TargetsCollection = (function () {
-    function TargetsCollection() {
-        this.targets = [];
+})(Entity);
+var Bullet = (function (_super) {
+    __extends(Bullet, _super);
+    function Bullet(x, y, width, height, color) {
+        _super.call(this, x, y, width, height, color);
+        this.width = width || 5;
+        this.height = height || 5;
+        this.color = color || '#ff0';
     }
-    TargetsCollection.prototype.add = function (target) {
-        this.targets[target.id] = target;
+    return Bullet;
+})(Entity);
+var Collection = (function () {
+    function Collection() {
+        this.entities = [];
+    }
+    Collection.prototype.add = function (entity) {
+        this.entities[entity.id] = entity;
         return this;
     };
-    TargetsCollection.prototype.getTarget = function (target) {
-        return this.targets[target.id];
+    Collection.prototype.getEntity = function (entity) {
+        return this.entities[entity.id];
     };
-    TargetsCollection.prototype.unset = function (target) {
-        delete this.targets[target.id];
+    Collection.prototype.unset = function (entity) {
+        delete this.entities[entity.id];
         return this;
     };
-    return TargetsCollection;
+    Collection.prototype.forEach = function (callback) {
+        for (var item in this.entities) {
+            callback(this.entities[item], item);
+        }
+    };
+    return Collection;
 })();
+var TargetsCollection = (function (_super) {
+    __extends(TargetsCollection, _super);
+    function TargetsCollection() {
+        _super.apply(this, arguments);
+    }
+    return TargetsCollection;
+})(Collection);
+var BulletsCollection = (function (_super) {
+    __extends(BulletsCollection, _super);
+    function BulletsCollection() {
+        _super.apply(this, arguments);
+    }
+    return BulletsCollection;
+})(Collection);
 var Game = (function (_super) {
     __extends(Game, _super);
     function Game(data) {
@@ -95,6 +143,9 @@ var Game = (function (_super) {
                 width: 15,
                 height: 5,
                 step: 5,
+            },
+            bullet: {
+                speed: 10
             }
         };
         _super.call(this, data);
@@ -103,7 +154,9 @@ var Game = (function (_super) {
             height: 480,
         });
         this.canvas = canvas;
+        Game.cx = canvas;
         this.time = new Date();
+        this.counter = this.time.getSeconds();
         this.K = {
             up: 38,
             left: 37,
@@ -111,6 +164,8 @@ var Game = (function (_super) {
             right: 39,
             space: 32,
         };
+        this.targets = new TargetsCollection();
+        this.bullets = new BulletsCollection();
     }
     Game.prototype.renderFrame = function () {
         var cv = this.canvas;
@@ -121,9 +176,15 @@ var Game = (function (_super) {
     Game.prototype.updateFrame = function () {
         var cv = this.canvas;
         cv.clear();
-        this.setBorders()
-            .updateGun();
-        this.push();
+        this.updateCounter()
+            .setBorders()
+            .updateGun()
+            .updateBullets();
+    };
+    Game.prototype.updateCounter = function () {
+        this.time = new Date();
+        this.counter = this.time.getSeconds();
+        return this;
     };
     Game.prototype.setBorders = function () {
         var cv = this.canvas;
@@ -153,6 +214,25 @@ var Game = (function (_super) {
             position = rightLimit;
         this.data.gun.position = position;
         cv.drawRect(position, cv.data.height - this.data.padding, this.data.gun.width, this.data.gun.height, '#000');
+        return this;
+    };
+    Game.prototype.updateBullets = function () {
+        var _this = this;
+        var cv = this.canvas;
+        this.bullets.forEach(function (e, i) {
+            if (e.y < 0)
+                _this.bullets.unset(e);
+            e.y -= _this.data.bullet.speed;
+            cv.drawRect(e.x, e.y, e.width, e.height, e.color);
+        });
+    };
+    Game.prototype.push = function () {
+        var x = this.data.gun.position;
+        var y = this.canvas.data.height;
+        var b = new Bullet(x, y);
+        this.bullets.add(b);
+        var cv = this.canvas;
+        cv.drawRect(b.x, b.y, b.width, b.height, b.color);
     };
     Game.prototype.handlers = function () {
         var _this = this;
@@ -170,7 +250,8 @@ var Game = (function (_super) {
             _this.push();
         }, true);
         window.addEventListener("deviceorientation", function (event) {
-            _this.deviceMovementDirection(event);
+            if (window.DeviceOrientationEvent)
+                _this.deviceMovementDirection(event);
         }, true);
     };
     Game.prototype.deviceMovementDirection = function (event) {
@@ -204,12 +285,6 @@ var Game = (function (_super) {
         };
         document.getElementById('debug').innerHTML = JSON.stringify(v) + "\n\n" + dir;
     };
-    Game.prototype.push = function () {
-        var cv = this.canvas;
-        cv.drawRect(this.data.gun.position, this.canvas.data.height - (this.time.getMilliseconds() / 2), 10, 10, '#000');
-        console.log('push');
-        console.log(this.data.gun.position, this.canvas.data.height - this.time.getSeconds() / 60);
-    };
     Game.prototype.deviceDirectionBy = function (axis) {
         var r = null;
         if (axis == 0)
@@ -238,6 +313,6 @@ var Game = (function (_super) {
     };
     return Game;
 })(Abstract);
-var g = new Game();
-g.init();
+var game = new Game();
+game.init();
 //# sourceMappingURL=init.js.map

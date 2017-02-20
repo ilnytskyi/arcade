@@ -1,10 +1,13 @@
 class Game extends Abstract {
     canvas:Canvas;
     targets:TargetsCollection;
+    bullets:BulletsCollection;
     leftBorder:number;
     rightBorder:number;
     time:Date;
+    counter:number;
     K:Object;
+    static cx:Canvas;
 
     constructor(data:Object) {
         this.data = {
@@ -14,22 +17,29 @@ class Game extends Abstract {
                 width: 15,
                 height: 5,
                 step: 5,
+            },
+            bullet: {
+                speed: 10
             }
-        }
+        };
         super(data);
         let canvas = new Canvas({
             width: 320,
             height: 480,
         });
         this.canvas = canvas;
+        Game.cx = canvas;
         this.time = new Date();
+        this.counter = this.time.getSeconds();
         this.K = {
             up: 38,
             left: 37,
             down: 40,
             right: 39,
             space: 32,
-        }
+        };
+        this.targets = new TargetsCollection();
+        this.bullets = new BulletsCollection();
     }
 
     renderFrame() {
@@ -42,9 +52,16 @@ class Game extends Abstract {
     updateFrame() {
         let cv = this.canvas;
         cv.clear();
-        this.setBorders()
-            .updateGun();
-        this.push();
+        this.updateCounter()
+            .setBorders()
+            .updateGun()
+            .updateBullets();
+    }
+
+    updateCounter() {
+        this.time = new Date();
+        this.counter = this.time.getSeconds();
+        return this;
     }
 
     setBorders() {
@@ -105,6 +122,38 @@ class Game extends Abstract {
             this.data.gun.height,
             '#000'
         );
+        return this;
+    }
+
+    updateBullets() {
+        let cv = this.canvas;
+        this.bullets.forEach((e,i) => {
+
+            if (e.y < 0) this.bullets.unset(e);
+
+            e.y -= this.data.bullet.speed;
+            cv.drawRect(
+                e.x,
+                e.y,
+                e.width,
+                e.height,
+                e.color
+            );
+        });
+    }
+
+    push() {
+        let x = this.data.gun.position;
+        let y = this.canvas.data.height;
+        let b = new Bullet(x,y);
+        this.bullets.add( b );
+
+        let cv = this.canvas;
+        cv.drawRect(
+            b.x,
+            b.y,
+            b.width,b.height,b.color
+        );
     }
 
     handlers() {
@@ -125,7 +174,7 @@ class Game extends Abstract {
         }, true);
 
         window.addEventListener("deviceorientation", (event) => {
-
+            if ( window.DeviceOrientationEvent )
             this.deviceMovementDirection(event);
 
         }, true);
@@ -165,17 +214,6 @@ class Game extends Abstract {
         };
         document.getElementById('debug').innerHTML = JSON.stringify(v) + "\n\n" + dir;
 
-    }
-
-    push() {
-        let cv = this.canvas;
-        cv.drawRect(
-            this.data.gun.position,
-            this.canvas.data.height - (this.time.getMilliseconds() / 2),
-            10,10,'#000'
-        );
-        console.log('push');
-        console.log(this.data.gun.position, this.canvas.data.height - this.time.getSeconds() / 60);
     }
 
     private deviceDirectionBy(axis:number) {

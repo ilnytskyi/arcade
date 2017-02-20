@@ -6,10 +6,15 @@
     "outFile": "js/init.js"
   },
   "files": [
+    "ts/functions.ts",
     "ts/Abstract.ts",
     "ts/Canvas.ts",
+    "ts/Entity.ts",
     "ts/Target.ts",
+    "ts/Bullet.ts",
+    "ts/Collection.ts",
     "ts/TargetsCollection.ts",
+    "ts/BulletsCollection.ts",
     "ts/Game.ts",
 
     "ts/init.ts"

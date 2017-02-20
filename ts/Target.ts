@@ -1,16 +1,10 @@
-class Target {
-    width:number;
-    height:number;
-    x:number;
-    y:number;
-    color:string;
+class Target  extends Entity {
+
 
     constructor(x:number,y:number,width:number,height:number,color:string){
-
+        super(x,y,width,height,color);
         this.width = width || 10;
         this.height = height || 10;
-        this.x = x;
-        this.y = y;
         this.color = color || '#d49661'
     }
 }

@@ -27,7 +27,7 @@ class Canvas extends Abstract {
 
     drawRect(x:number, y:number, width:number, height:number, color?:string) {
         this.cx.beginPath();
-        this.cx.fillStyle = color;
+        this.cx.fillStyle = color || '#000';
         this.cx.fillRect(x, y, width, height);
         this.cx.closePath();
         return this;
