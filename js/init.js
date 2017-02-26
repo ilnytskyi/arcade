@@ -142,10 +142,13 @@ var Game = (function (_super) {
             gun: {
                 width: 15,
                 height: 5,
-                step: 5,
+                step: 6,
             },
             bullet: {
                 speed: 10
+            },
+            target: {
+                speed: 5
             }
         };
         _super.call(this, data);
@@ -179,7 +182,9 @@ var Game = (function (_super) {
         this.updateCounter()
             .setBorders()
             .updateGun()
-            .updateBullets();
+            .updateBullets()
+            .updateTargets();
+        this.addTarget();
     };
     Game.prototype.updateCounter = function () {
         this.time = new Date();
@@ -225,8 +230,29 @@ var Game = (function (_super) {
             e.y -= _this.data.bullet.speed;
             cv.drawRect(e.x, e.y, e.width, e.height, e.color);
         });
+        return this;
     };
-    Game.prototype.push = function () {
+    Game.prototype.updateTargets = function () {
+        var _this = this;
+        var cv = this.canvas;
+        this.targets.forEach(function (e, i) {
+            if (e.y > _this.canvas.data.height)
+                _this.targets.unset(e);
+            e.y += _this.data.target.speed;
+            cv.drawRect(e.x, e.y, e.width, e.height, e.color);
+        });
+        return this;
+    };
+    Game.prototype.addTarget = function () {
+        //if (this.counter % 2 == 0) {
+        //    return;
+        //}
+        var x = this.getBetweenRandom();
+        var y = 0;
+        var t = new Target(x, y);
+        this.targets.add(t);
+    };
+    Game.prototype.pushBullet = function () {
         var x = this.data.gun.position;
         var y = this.canvas.data.height;
         var b = new Bullet(x, y);
@@ -244,10 +270,10 @@ var Game = (function (_super) {
             if (key == _this.K.right)
                 _this.data.gun.position += step;
             if (key == _this.K.space)
-                _this.push();
+                _this.pushBullet();
         }, true);
         document.addEventListener('click', function (e) {
-            _this.push();
+            _this.pushBullet();
         }, true);
         window.addEventListener("deviceorientation", function (event) {
             if (window.DeviceOrientationEvent)
@@ -304,6 +330,12 @@ var Game = (function (_super) {
             device.changePlu = axis;
         }
         return r;
+    };
+    Game.prototype.getBetweenRandom = function () {
+        var right = this.rightBorder - 15;
+        var left = this.leftBorder;
+        return Math.floor((Math.random() * right) + left);
+        ;
     };
     Game.prototype.init = function () {
         this.renderFrame();
