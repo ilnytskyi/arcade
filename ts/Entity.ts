@@ -21,4 +21,9 @@ class Entity {
         this.color = color || '#ff00';
     }
 
+    detectCollision(e:Entity) {
+        let vertical = (this.y + this.height) > e.y && e.y < this.y;
+        console.log(vertical);
+    }
+
 }

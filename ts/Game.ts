@@ -22,7 +22,8 @@ class Game extends Abstract {
                 speed: 10
             },
             target: {
-                speed: 5
+                speed: 1,
+                often: 2
             }
         };
         super(data);
@@ -33,7 +34,7 @@ class Game extends Abstract {
         this.canvas = canvas;
         Game.cx = canvas;
         this.time = new Date();
-        this.counter = this.time.getSeconds();
+        this.counter = this.time.getMilliseconds();
         this.K = {
             up: 38,
             left: 37,
@@ -63,11 +64,12 @@ class Game extends Abstract {
             .updateTargets();
 
         this.addTarget();
+        //console.log(this.counter);
     }
 
     updateCounter() {
         this.time = new Date();
-        this.counter = this.time.getSeconds();
+        this.counter = this.time.getMilliseconds() / 100;
         return this;
     }
 
@@ -158,7 +160,14 @@ class Game extends Abstract {
 
             if (e.y > this.canvas.data.height) this.targets.unset(e);
 
-            e.y += this.data.target.speed;
+            this.bullets.forEach((b,n) => {
+                e.detectCollision(b);
+                console.log(b);
+            });
+
+            if (!window.pause)
+            e.y += (this.data.target.speed );
+
             cv.drawRect(
                 e.x,
                 e.y,
@@ -173,13 +182,21 @@ class Game extends Abstract {
 
     addTarget() {
 
-        //if (this.counter % 2 == 0) {
-        //    return;
-        //}
+        if ( window.pause || this.counter < 9.8) {
+            return;
+        }
 
         let x = this.getBetweenRandom();
         let y = 0;
         let t = new Target(x,y);
+
+        //fix when target ot of the field
+        if ((t.x + t.width) >= this.rightBorder) {
+            //let move = t.x + t.width - this.rightBorder;
+            //t.x -= move;
+            //console.log(this.rightBorder,t.id,t.x, t.x + t.width);
+            return;
+        }
         this.targets.add( t );
     }
 
@@ -288,7 +305,7 @@ class Game extends Abstract {
     }
 
     private getBetweenRandom() {
-        let right = this.rightBorder - 15;
+        let right = this.rightBorder;
         let left = this.leftBorder;
 
         return Math.floor((Math.random() * right) + left); ;

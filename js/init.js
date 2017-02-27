@@ -67,14 +67,18 @@ var Entity = (function () {
         this.width = width || 10;
         this.color = color || '#ff00';
     }
+    Entity.prototype.detectCollision = function (e) {
+        var vertical = (this.y + this.height) > e.y && e.y < this.y;
+        console.log(vertical);
+    };
     return Entity;
 })();
 var Target = (function (_super) {
     __extends(Target, _super);
     function Target(x, y, width, height, color) {
         _super.call(this, x, y, width, height, color);
-        this.width = width || 10;
-        this.height = height || 10;
+        this.width = width || 15;
+        this.height = height || 15;
         this.color = color || '#d49661';
     }
     return Target;
@@ -148,7 +152,8 @@ var Game = (function (_super) {
                 speed: 10
             },
             target: {
-                speed: 5
+                speed: 1,
+                often: 2
             }
         };
         _super.call(this, data);
@@ -159,7 +164,7 @@ var Game = (function (_super) {
         this.canvas = canvas;
         Game.cx = canvas;
         this.time = new Date();
-        this.counter = this.time.getSeconds();
+        this.counter = this.time.getMilliseconds();
         this.K = {
             up: 38,
             left: 37,
@@ -185,10 +190,11 @@ var Game = (function (_super) {
             .updateBullets()
             .updateTargets();
         this.addTarget();
+        //console.log(this.counter);
     };
     Game.prototype.updateCounter = function () {
         this.time = new Date();
-        this.counter = this.time.getSeconds();
+        this.counter = this.time.getMilliseconds() / 100;
         return this;
     };
     Game.prototype.setBorders = function () {
@@ -238,18 +244,30 @@ var Game = (function (_super) {
         this.targets.forEach(function (e, i) {
             if (e.y > _this.canvas.data.height)
                 _this.targets.unset(e);
-            e.y += _this.data.target.speed;
+            _this.bullets.forEach(function (b, n) {
+                e.detectCollision(b);
+                console.log(b);
+            });
+            if (!window.pause)
+                e.y += (_this.data.target.speed);
             cv.drawRect(e.x, e.y, e.width, e.height, e.color);
         });
         return this;
     };
     Game.prototype.addTarget = function () {
-        //if (this.counter % 2 == 0) {
-        //    return;
-        //}
+        if (window.pause || this.counter < 9.8) {
+            return;
+        }
         var x = this.getBetweenRandom();
         var y = 0;
         var t = new Target(x, y);
+        //fix when target ot of the field
+        if ((t.x + t.width) >= this.rightBorder) {
+            //let move = t.x + t.width - this.rightBorder;
+            //t.x -= move;
+            //console.log(this.rightBorder,t.id,t.x, t.x + t.width);
+            return;
+        }
         this.targets.add(t);
     };
     Game.prototype.pushBullet = function () {
@@ -332,7 +350,7 @@ var Game = (function (_super) {
         return r;
     };
     Game.prototype.getBetweenRandom = function () {
-        var right = this.rightBorder - 15;
+        var right = this.rightBorder;
         var left = this.leftBorder;
         return Math.floor((Math.random() * right) + left);
         ;
