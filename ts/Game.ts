@@ -8,6 +8,9 @@ class Game extends Abstract {
     counter:number;
     K:Object;
     static cx:Canvas;
+    score:number;
+    hits:number;
+    pass:number;
 
     constructor(data:Object) {
         this.data = {
@@ -44,6 +47,9 @@ class Game extends Abstract {
         };
         this.targets = new TargetsCollection();
         this.bullets = new BulletsCollection();
+        this.score = 0;
+        this.hits = 0;
+        this.pass = 0;
     }
 
     renderFrame() {
@@ -65,6 +71,8 @@ class Game extends Abstract {
 
         this.addTarget();
         //console.log(this.counter);
+        this.updateScore()
+            .fillInfo();
     }
 
     updateCounter() {
@@ -159,14 +167,21 @@ class Game extends Abstract {
         this.targets.forEach((e,i) => {
 
             if (e.y > this.canvas.data.height) this.targets.unset(e);
-
+            if (e.y > this.canvas.data.height) {
+                this.pass += 1;
+            }
+            //
             this.bullets.forEach((b,n) => {
-                e.detectCollision(b);
-                console.log(b);
+                let collision = e.detectCollision(b);
+                if (collision) {
+                    this.targets.unset(e);
+                    this.bullets.unset(b);
+                    this.hits += 1;
+                }
             });
 
             if (!window.pause)
-            e.y += (this.data.target.speed );
+            e.y += ( this.data.target.speed );
 
             cv.drawRect(
                 e.x,
@@ -177,6 +192,11 @@ class Game extends Abstract {
             );
         });
 
+        return this;
+    }
+
+    updateScore() {
+        this.score = this.hits - this.pass;
         return this;
     }
 
@@ -216,6 +236,7 @@ class Game extends Abstract {
 
     handlers() {
         document.addEventListener('keydown', (e) => {
+            console.log(e);
             let key = e.keyCode;
             let step = this.data.gun.step;
 
@@ -223,7 +244,6 @@ class Game extends Abstract {
             if (key == this.K.right) this.data.gun.position += step;
 
             if (key == this.K.space) this.pushBullet();
-
 
         }, true);
 
@@ -233,7 +253,11 @@ class Game extends Abstract {
 
         window.addEventListener("deviceorientation", (event) => {
             if ( window.DeviceOrientationEvent )
-            this.deviceMovementDirection(event);
+            {
+             try {
+                 this.deviceMovementDirection(event);
+             } catch (e){}
+            }
 
         }, true);
     }
@@ -309,6 +333,16 @@ class Game extends Abstract {
         let left = this.leftBorder;
 
         return Math.floor((Math.random() * right) + left); ;
+    }
+
+    fillInfo()
+    {
+        try {
+            let el = document.getElementById('info');
+            el.innerHTML = "SCORE: " + this.score + "\nhits: " + this.hits + "\npassed: " + this.pass;
+        } catch(e) {}
+
+        return this;
     }
 
     public animate = () => {

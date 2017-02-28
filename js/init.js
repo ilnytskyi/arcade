@@ -68,8 +68,13 @@ var Entity = (function () {
         this.color = color || '#ff00';
     }
     Entity.prototype.detectCollision = function (e) {
-        var vertical = (this.y + this.height) > e.y && e.y < this.y;
-        console.log(vertical);
+        var vertical = (this.y + this.height) >= e.y && (e.y + e.height) >= this.y;
+        var horizontal = (this.x + this.width) >= e.x && (e.x + e.width) >= this.x;
+        //if (vertical && horizontal) {
+        //    this.color = '#000';
+        //    e.color = '#000';
+        //}
+        return vertical && horizontal;
     };
     return Entity;
 })();
@@ -174,6 +179,9 @@ var Game = (function (_super) {
         };
         this.targets = new TargetsCollection();
         this.bullets = new BulletsCollection();
+        this.score = 0;
+        this.hits = 0;
+        this.pass = 0;
     }
     Game.prototype.renderFrame = function () {
         var cv = this.canvas;
@@ -191,6 +199,8 @@ var Game = (function (_super) {
             .updateTargets();
         this.addTarget();
         //console.log(this.counter);
+        this.updateScore()
+            .fillInfo();
     };
     Game.prototype.updateCounter = function () {
         this.time = new Date();
@@ -244,14 +254,26 @@ var Game = (function (_super) {
         this.targets.forEach(function (e, i) {
             if (e.y > _this.canvas.data.height)
                 _this.targets.unset(e);
+            if (e.y > _this.canvas.data.height) {
+                _this.pass += 1;
+            }
+            //
             _this.bullets.forEach(function (b, n) {
-                e.detectCollision(b);
-                console.log(b);
+                var collision = e.detectCollision(b);
+                if (collision) {
+                    _this.targets.unset(e);
+                    _this.bullets.unset(b);
+                    _this.hits += 1;
+                }
             });
             if (!window.pause)
                 e.y += (_this.data.target.speed);
             cv.drawRect(e.x, e.y, e.width, e.height, e.color);
         });
+        return this;
+    };
+    Game.prototype.updateScore = function () {
+        this.score = this.hits - this.pass;
         return this;
     };
     Game.prototype.addTarget = function () {
@@ -281,6 +303,7 @@ var Game = (function (_super) {
     Game.prototype.handlers = function () {
         var _this = this;
         document.addEventListener('keydown', function (e) {
+            console.log(e);
             var key = e.keyCode;
             var step = _this.data.gun.step;
             if (key == _this.K.left)
@@ -294,8 +317,12 @@ var Game = (function (_super) {
             _this.pushBullet();
         }, true);
         window.addEventListener("deviceorientation", function (event) {
-            if (window.DeviceOrientationEvent)
-                _this.deviceMovementDirection(event);
+            if (window.DeviceOrientationEvent) {
+                try {
+                    _this.deviceMovementDirection(event);
+                }
+                catch (e) { }
+            }
         }, true);
     };
     Game.prototype.deviceMovementDirection = function (event) {
@@ -354,6 +381,14 @@ var Game = (function (_super) {
         var left = this.leftBorder;
         return Math.floor((Math.random() * right) + left);
         ;
+    };
+    Game.prototype.fillInfo = function () {
+        try {
+            var el = document.getElementById('info');
+            el.innerHTML = "SCORE: " + this.score + "\nhits: " + this.hits + "\npassed: " + this.pass;
+        }
+        catch (e) { }
+        return this;
     };
     Game.prototype.init = function () {
         this.renderFrame();

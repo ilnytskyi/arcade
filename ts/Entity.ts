@@ -22,8 +22,15 @@ class Entity {
     }
 
     detectCollision(e:Entity) {
-        let vertical = (this.y + this.height) > e.y && e.y < this.y;
-        console.log(vertical);
+        let vertical = (this.y + this.height) >= e.y && (e.y + e.height) >= this.y;
+        let horizontal = (this.x + this.width) >= e.x && (e.x + e.width) >= this.x;
+
+        //if (vertical && horizontal) {
+        //    this.color = '#000';
+        //    e.color = '#000';
+        //}
+
+        return vertical && horizontal;
     }
 
 }
