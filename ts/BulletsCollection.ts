@@ -1,0 +1,3 @@
+class BulletsCollection extends Collection {
+
+}
