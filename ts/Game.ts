@@ -260,6 +260,11 @@ class Game extends Abstract {
             }
 
         }, true);
+
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            this.pushBullet();
+        }, false);
     }
 
     deviceMovementDirection(event:DeviceOrientationEvent) {
