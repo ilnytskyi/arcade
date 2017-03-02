@@ -32,5 +32,16 @@
         <!--<div onclick="window.pause = true;">Pause targets</div>-->
         <!--<div onclick="window.pause = false;">Continue targets</div>-->
     </div>
+    <script>
+        //try disable zoom
+        var lastTouchEnd = 0;
+        window.addEventListener('touchend', function (event) {
+            var now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
 </body>
 </html>
