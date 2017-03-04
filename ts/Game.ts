@@ -32,7 +32,7 @@ class Game extends Abstract {
         super(data);
         let canvas = new Canvas({
             width: 320,
-            height: 480,
+            height: 465,
         });
         this.canvas = canvas;
         Game.cx = canvas;
@@ -245,11 +245,15 @@ class Game extends Abstract {
 
             if (key == this.K.space) this.pushBullet();
 
-        }, true);
+        }, false);
 
-        document.addEventListener('click', (e) => {
+        //document.addEventListener('click', (e) => {
+        //     this.pushBullet();
+        //}, true);
+
+        document.addEventListener('touchstart', (e) => {
              this.pushBullet();
-        }, true);
+        }, false);
 
         window.addEventListener("deviceorientation", (event) => {
             if ( window.DeviceOrientationEvent )
@@ -259,7 +263,7 @@ class Game extends Abstract {
              } catch (e){}
             }
 
-        }, true);
+        }, false);
 
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();

@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 function guid() {
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
@@ -21,7 +16,12 @@ var Abstract = (function () {
         }
     };
     return Abstract;
-}());
+})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Canvas = (function (_super) {
     __extends(Canvas, _super);
     function Canvas(data) {
@@ -57,7 +57,7 @@ var Canvas = (function (_super) {
         return this;
     };
     return Canvas;
-}(Abstract));
+})(Abstract);
 var Entity = (function () {
     function Entity(x, y, width, height, color) {
         this.id = guid();
@@ -77,7 +77,7 @@ var Entity = (function () {
         return vertical && horizontal;
     };
     return Entity;
-}());
+})();
 var Target = (function (_super) {
     __extends(Target, _super);
     function Target(x, y, width, height, color) {
@@ -87,7 +87,7 @@ var Target = (function (_super) {
         this.color = color || '#d49661';
     }
     return Target;
-}(Entity));
+})(Entity);
 var Bullet = (function (_super) {
     __extends(Bullet, _super);
     function Bullet(x, y, width, height, color) {
@@ -97,7 +97,7 @@ var Bullet = (function (_super) {
         this.color = color || '#f00';
     }
     return Bullet;
-}(Entity));
+})(Entity);
 var Collection = (function () {
     function Collection() {
         this.entities = [];
@@ -119,21 +119,21 @@ var Collection = (function () {
         }
     };
     return Collection;
-}());
+})();
 var TargetsCollection = (function (_super) {
     __extends(TargetsCollection, _super);
     function TargetsCollection() {
         _super.apply(this, arguments);
     }
     return TargetsCollection;
-}(Collection));
+})(Collection);
 var BulletsCollection = (function (_super) {
     __extends(BulletsCollection, _super);
     function BulletsCollection() {
         _super.apply(this, arguments);
     }
     return BulletsCollection;
-}(Collection));
+})(Collection);
 var Game = (function (_super) {
     __extends(Game, _super);
     function Game(data) {
@@ -164,7 +164,7 @@ var Game = (function (_super) {
         _super.call(this, data);
         var canvas = new Canvas({
             width: 320,
-            height: 480,
+            height: 465,
         });
         this.canvas = canvas;
         Game.cx = canvas;
@@ -312,10 +312,13 @@ var Game = (function (_super) {
                 _this.data.gun.position += step;
             if (key == _this.K.space)
                 _this.pushBullet();
-        }, true);
-        document.addEventListener('click', function (e) {
+        }, false);
+        //document.addEventListener('click', (e) => {
+        //     this.pushBullet();
+        //}, true);
+        document.addEventListener('touchstart', function (e) {
             _this.pushBullet();
-        }, true);
+        }, false);
         window.addEventListener("deviceorientation", function (event) {
             if (window.DeviceOrientationEvent) {
                 try {
@@ -323,7 +326,7 @@ var Game = (function (_super) {
                 }
                 catch (e) { }
             }
-        }, true);
+        }, false);
         document.addEventListener('touchmove', function (e) {
             e.preventDefault();
             _this.pushBullet();
@@ -401,7 +404,7 @@ var Game = (function (_super) {
         console.log(this);
     };
     return Game;
-}(Abstract));
+})(Abstract);
 var game = new Game();
 game.init();
 //# sourceMappingURL=init.js.map
